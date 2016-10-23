@@ -13,41 +13,48 @@ connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
     start();
-})
+});
+
 var start = function() {
     inquirer.prompt({
         name: "WhereTo",
         type: "checkbox",
         message: "What department do you need?",
         choices: ["Pets", "Electronics", "Mens", "Womens"]
+            // }).then(function(answer) {
+            //     connection.query("SELECT * FROM products WHERE pets=?", {
+            //         productName: answer.products,
+            //         departmentName: answer.dept,
+            //         price: answer.price,
+            //         stockQuantity: answer.qty,
+            // }, 
+            // 
+           }) .then(function(answer) {
+                    switch (answer) {
+                        case 'Pets':
+                            petProducts();
+                            break;
 
-    }).then(function(answer) {
-        if (answer.WhereTo.toUpperCase() === "Pets") {
-            postPets();
-        }
-        if (answer.WhereTo.toUpperCase() === "Electronics") {
-            postElectronics();
-        }
-        if (answer.WhereTo.toUpperCase() === "Mens") {
-            postMens();
-        }
-        if (answer.WhereTo.toUpperCase() === "Womens") {
-            postWomens();
-        } else {
-            throw err;
-        }
-    }).then(function(answer) {
-        connection.query("INSERT INTO auctions SET ?", {
-            productName: answer.product,
-            departmentName: answer.dept,
-            price: answer.price,
-            stockQuantity: answer.qty,
-        }, function(err, res) {
-            // console.log("Your auction was created successfully!");
-            start();
-        });
-    })
-}
+                        case 'Electronics':
+                            electronicProducts();
+                            break;
+
+                        case 'Mens':
+                            menProducts();
+                            break;
+
+                        case 'Womes':
+                            womensProducts();
+                            break;
+                    }
+                });
+                function (err, res) {
+                    console.log("Loading...");
+                    console.log("----------------------------------------------------------------");
+                    // start();
+                };
+    };
+
 
 
 var petProducts = function() {
@@ -58,25 +65,25 @@ var petProducts = function() {
         choices: function(value) {
             var choiceArray = [];
             for (var i = 0; i < res.length; i++) {
-                choiceArray.push(res[i].products);
+                choiceArray.push(res[i].pets);
             }
             return choiceArray;
         },
         message: "How many?"
     }]).then(function(answer) {
         for (var i = 0; i < res.length; i++) {
-            if (res[i].itemname == answer.choice) {
-                var chosenItem = res[i];
+            if (res[i].product == answer.dept) {
+                var product = res[i];
                 inquirer.prompt({
                     name: "sure",
                     type: "input",
-                    message: "You want " + chosenItem + " ?",
+                    message: "You want " + product + " ?",
                 }).then(function(answer) {
-                    if (chosenItem.pets < parseInt(answer.item)) {
+                    if (answer.product < parseInt(answer.product)) {
                         connection.query("UPDATE auctions SET ? WHERE ?", [{
                             qty: answer.product
                         }, {
-                            id: chosenItem.id
+                            id: product.id
                         }], function(err, res) {
                             console.log("Your order was successfull!");
                             start();
