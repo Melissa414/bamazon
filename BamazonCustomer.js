@@ -43,16 +43,15 @@ var start = function() {
                             menProducts();
                             break;
 
-                        case 'Womes':
-                            womensProducts();
+                        case 'Womens':
+                            womenProducts();
                             break;
                     }
-                });
-                function (err, res) {
+                }).then (function (err, res) {
                     console.log("Loading...");
                     console.log("----------------------------------------------------------------");
                     // start();
-                };
+                });
     };
 
 
